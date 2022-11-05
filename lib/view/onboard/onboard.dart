@@ -1,12 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:form_builder_extra_fields/form_builder_extra_fields.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:test_app/controller/constant/color.dart';
 import 'package:test_app/controller/constant/typograph.dart';
 import '../../controller/api/api.dart';
+import '../../controller/common/common_widgets.dart';
 import '../../controller/common/content_colum.dart';
 
 class OnBoard extends StatefulWidget {
@@ -30,17 +31,27 @@ class _OnBoardState extends State<OnBoard> {
         _countryListDrop.add(countryName);
       });
     });
+    countryDelete();
+  }
+
+  void countryDelete (){
+    if(_countryListDrop.isNotEmpty){
+      Timer.periodic(Duration(seconds: 10), (timer){
+      setState(() {
+        _countryListDrop.removeAt(0);
+      });
+        });
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('All country is deleted from the country list!'),
+      ));
+    }
   }
 
   @override
   void initState() {
     loadAllCountry();
     super.initState();
-  }
-
-  @override
-  void dispose() {
-     super.dispose();
   }
 
   @override
@@ -101,9 +112,7 @@ class _OnBoardState extends State<OnBoard> {
                       'Select Country',
                       style: sixteenBlack,
                     ),
-                    const SizedBox(
-                      height: 16,
-                    ),
+                    primaryVerticalSpacer,
                     FormBuilder(
                       key: _formKey,
                       enabled: !_isLoading,
@@ -112,35 +121,23 @@ class _OnBoardState extends State<OnBoard> {
                         _formKey.currentState!.save();
                       },
                       child: FormBuilderSearchableDropdown<String>(
-                        // autovalidate: true,
                         popupProps: const PopupProps.menu(showSearchBox: true),
                         dropdownSearchDecoration: InputDecoration(
-                          hintText: 'Search',
+                           hintText: 'Search',
                           hintStyle: fourteenAss,
-                          // labelText: 'Search',
                         ),
                         name: 'country_list',
                         filterFn: (country, filter) =>
                             country.toLowerCase().contains(filter.toLowerCase()),
                         decoration: InputDecoration(
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: white,
                           contentPadding: const EdgeInsets.all(16),
-                          hintText: 'Search',
-                          hintStyle: const TextStyle(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: deepAssTextColor,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: const BorderSide(color: deepAssTextColor),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: const BorderSide(color: deepAss),
-                          ),
-                          focusColor: primaryColor,
+                           hintText: 'Search',
+                           hintStyle: fourteenDeepAss,
+                          focusedBorder: outlineBorder,
+                          enabledBorder: outlineBorder,
+                          focusColor: Colors.blue,
                         ),
                         validator: FormBuilderValidators.compose(
                             [FormBuilderValidators.required()]),
@@ -150,7 +147,7 @@ class _OnBoardState extends State<OnBoard> {
                     ),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),

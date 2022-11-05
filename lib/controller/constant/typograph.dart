@@ -20,6 +20,11 @@ final fourteenWhite = GoogleFonts.montserrat(
 final fourteenAss = GoogleFonts.montserrat(
   textStyle: const TextStyle(fontSize: 14,color: Color(0xFFA1A1A1)),
 );
+const fourteenDeepAss = TextStyle(
+  fontWeight: FontWeight.w400,
+  fontSize: 14,
+  color: deepAssTextColor,
+);
 
 final twelveAss = GoogleFonts.montserrat(
   textStyle: const TextStyle(fontSize: 12,color: Color(0xFFA1A1A1)),
