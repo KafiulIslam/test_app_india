@@ -24,7 +24,6 @@ class _OnBoardState extends State<OnBoard> {
   final CountryState _countryState = Get.put(CountryState());
   final _formKey = GlobalKey<FormBuilderState>();
   late bool _isLoading = false;
- // late String countryName = '';
 
   @override
   void initState() {

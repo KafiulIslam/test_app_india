@@ -42,13 +42,22 @@ class _CountryPickerState extends State<CountryPicker> {
           phoneCode: phoneCode,
           onTap: () {
             _countryState.changeCountryData(countryName,phoneCode,flagUrl);
-            if(_countryState.selectedCountry != '' && _countryListDrop.isNotEmpty){
-              countryDelete();
-            }
+            // if(_countryState.selectedCountry != '' && _countryListDrop.isNotEmpty){
+            //   countryDelete();
+            // }
           },
         ));
       });
     });
+    if(_countryState.selectedCountry != '' && _countryListDrop.isNotEmpty){
+      Timer.periodic(Duration(seconds: 10), (timer) {
+        setState(() {
+          _countryListDrop.removeAt(0);
+        });
+      });
+    }else{
+      loadAllCountry();
+    }
   }
 
   void countryDelete() {
