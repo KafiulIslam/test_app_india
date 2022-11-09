@@ -1,8 +1,4 @@
-
-
-
 import 'package:dio/dio.dart';
-
 import 'dio.dart';
 
 Future<Map<String, dynamic>> getCountryList() async {
