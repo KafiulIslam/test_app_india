@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_app/controller/common/common_widgets.dart';
 import 'package:test_app/controller/common/country_flag.dart';
-import 'package:test_app/controller/constant/color.dart';
 import '../constant/typograph.dart';
 
 class CountryTile extends StatelessWidget {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -8,7 +7,6 @@ import 'package:test_app/controller/constant/color.dart';
 import 'package:test_app/controller/constant/typograph.dart';
 import 'package:test_app/controller/state/country_state.dart';
 import 'package:test_app/view/country_picker/country_picker.dart';
-import '../../controller/api/api.dart';
 import '../../controller/common/common_widgets.dart';
 import '../../controller/common/content_colum.dart';
 
