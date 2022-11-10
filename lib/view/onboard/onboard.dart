@@ -22,14 +22,6 @@ class OnBoard extends StatefulWidget {
 class _OnBoardState extends State<OnBoard> {
 
   final CountryState _countryState = Get.put(CountryState());
-  final _formKey = GlobalKey<FormBuilderState>();
-  late bool _isLoading = false;
-
-  @override
-  void initState() {
-    //loadAllCountry();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,39 +114,8 @@ class _OnBoardState extends State<OnBoard> {
                         style: sixteenBlack,
                       ),
                       primaryVerticalSpacer,
-                      _countryState.selectedCountry == '' ? _nullField(context) : _countryField(context)
-                      // FormBuilder(
-                      //   key: _formKey,
-                      //   enabled: !_isLoading,
-                      //   autovalidateMode: AutovalidateMode.disabled,
-                      //   onChanged: () {
-                      //     _formKey.currentState!.save();
-                      //   },
-                      //   child: FormBuilderSearchableDropdown<String>(
-                      //     popupProps: const PopupProps.menu(showSearchBox: true),
-                      //     dropdownSearchDecoration: InputDecoration(
-                      //        hintText: 'Search',
-                      //       hintStyle: fourteenAss,
-                      //     ),
-                      //     name: 'country_list',
-                      //     filterFn: (country, filter) =>
-                      //         country.toLowerCase().contains(filter.toLowerCase()),
-                      //     decoration: InputDecoration(
-                      //       filled: true,
-                      //       fillColor: white,
-                      //       contentPadding: const EdgeInsets.all(16),
-                      //        hintText: 'Search',
-                      //        hintStyle: fourteenDeepAss,
-                      //       focusedBorder: outlineBorder,
-                      //       enabledBorder: outlineBorder,
-                      //       focusColor: Colors.blue,
-                      //     ),
-                      //     validator: FormBuilderValidators.compose(
-                      //         [FormBuilderValidators.required()]),
-                      //     items: _countryListDrop,
-                      //     valueTransformer: (val) => val,
-                      //   ),
-                      // ),
+                   //   _countryState.selectedCountry == '' ? _nullField(context) : _countryField(context)
+                    _inputField(context),
                     ],
                   ),
                 ),
@@ -187,32 +148,37 @@ class _OnBoardState extends State<OnBoard> {
     );
   }
 
-  Widget _nullField(BuildContext context) {
-    return  GestureDetector(
+  Widget _inputField(BuildContext context) {
+    return TextFormField(
       onTap: (){
-Get.to(()=>const CountryPicker());
+        Get.to(()=> const CountryPicker());
       },
-      child: Container(
-          width: double.infinity,
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.0),
-              border: Border.all(
-                  color:  borderColor)),
-
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: const [
-                Text(
-                  'Search',
-                  style: fourteenDeepAss,
-                ),
-                Text(
-                  '',
-                ),
-              ],
-            ),
-          )
+     initialValue: _countryState.selectedCountry,
+      readOnly:  true,
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: trans,
+        contentPadding: const EdgeInsets.all(16.0),
+        hintText: 'Search',
+        hintStyle: fourteenDeepAss,
+        prefixIcon: _countryState.selectedCountry == '' ? SizedBox.shrink() : CountryFlag(flagUrl: _countryState.imageUrl),
+        suffixIcon: _countryState.selectedCountry == '' ? SizedBox.shrink() : TextButton(
+            onPressed: () {
+              Get.to(()=> const CountryPicker());
+            },
+            child: Text(
+              'Edit',
+              style: sixteenBlack,
+            )),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(color: _countryState.selectedCountry == '' ? borderColor : trans),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          borderSide: BorderSide(color: _countryState.selectedCountry == '' ? borderColor : trans),
+        ),
+        focusColor: Colors.blue,
       ),
     );
   }
@@ -227,14 +193,14 @@ Get.to(()=>const CountryPicker());
             children: [
               CountryFlag(flagUrl: _countryState.imageUrl),
               primaryHorizontalSpacer,
-              RichText(
-                text: TextSpan(
-                  children: <TextSpan>[
-                    TextSpan(text:  _countryState.selectedCountry, style: sixteenBlack),
-                    TextSpan(text: ' (${_countryState.phoneCode})',style: sixteenDeepAss),
-                  ],
-                ),
-              )
+             Container(width: MediaQuery.of(context).size.width / 1.8,child:  RichText(
+               text: TextSpan(
+                 children: <TextSpan>[
+                   TextSpan(text:  _countryState.selectedCountry, style: sixteenBlack),
+                   TextSpan(text: ' (${_countryState.phoneCode})',style: sixteenDeepAss),
+                 ],
+               ),
+             ),)
             ],
           ),
           TextButton(
@@ -251,3 +217,4 @@ Get.to(()=>const CountryPicker());
   }
   
 }
+

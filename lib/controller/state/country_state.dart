@@ -1,6 +1,10 @@
 import 'package:get/get.dart';
+import 'package:test_app/model/country_model.dart';
 
 class CountryState extends GetxController{
+
+  RxList<CountryModel> countryListDrop = (List<CountryModel>.of([])).obs;
+  // List<CountryModel> countryListDrop = [].obs;
   String _countryName = '';
   String get selectedCountry => _countryName;
 
@@ -17,6 +21,17 @@ class CountryState extends GetxController{
     update();
     _imageUrl = image;
     update();
+  }
+
+  bool _isNotPulled = true;
+  bool get isNotPulled => _isNotPulled;
+
+  void changePullStatus (){
+    _isNotPulled = !_isNotPulled;
+    var index = 0;
+    if (!_isNotPulled) {index = 1;}
+    update();
+    print('pull value is $_isNotPulled');
   }
 
 }
