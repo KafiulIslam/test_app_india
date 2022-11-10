@@ -61,7 +61,7 @@ class _TrialPageState extends State<TrialPage> {
           SizedBox(height: 52,),
           TextFormField(
             controller: controller,
-            decoration: new InputDecoration(
+            decoration: InputDecoration(
                 suffixIcon: IconButton(icon: new Icon(Icons.cancel), onPressed: () {
                   controller.clear();
                   onSearchTextChanged('');

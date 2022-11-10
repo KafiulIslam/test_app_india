@@ -24,35 +24,45 @@ class CountryPicker extends StatefulWidget {
 }
 
 class _CountryPickerState extends State<CountryPicker> {
-   final CountryState _countryState = Get.put(CountryState());
 
-  late List<CountryModel> _countryListDrop = [];
-  TextEditingController searchFieldController = TextEditingController();
-  late String searchParam = '';
+   final CountryState _countryState = Get.put(CountryState());
+   TextEditingController searchFieldController = TextEditingController();
 
   Future<void> loadAllCountry() async {
     final countryData = await getCountryList();
     countryData['data']['data']['countries'].forEach((element) {
-      String countryId = element['country_id'] ?? '';
-      String countryName = element['country_name'] ?? '';
-      String flagUrl = element['image'] ?? '';
-      String phoneCode = element['phone_code'] ?? '';
       setState(() {
-        _countryListDrop.add(CountryModel(countryName, flagUrl, phoneCode));
+         _allCountryList.add(CountryList.fromJson(element));
+       // _countryState.isNotPulled == true ?  _allCountryList.add(CountryList.fromJson(element)) : _searchCountryList.removeWhere((element) => element.countryName == 'United Kingdom');
       });
     });
     if (_countryState.selectedCountry != '') {
-      Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (_countryListDrop.isNotEmpty) {
+      Timer.periodic(const Duration(seconds: 10), (timer) {
+        if (_allCountryList.isNotEmpty ) {
           setState(() {
-           _countryListDrop.removeAt(0);
+            _allCountryList.removeAt(0);
           });
-        } else {
+        } else{
           loadAllCountry();
         }
       });
     }
   }
+
+   onSearchTextChanged(String text) async {
+     _searchCountryList.clear();
+     if (text.isEmpty) {
+       setState(() {});
+       return;
+     }
+
+     _allCountryList.forEach((userDetail) {
+       if (userDetail.countryName.contains(text) || userDetail.phoneCode.contains(text))
+         _searchCountryList.add(userDetail);
+     });
+
+     setState(() {});
+   }
 
   @override
   void initState() {
@@ -65,49 +75,45 @@ class _CountryPickerState extends State<CountryPicker> {
     return SafeArea(
       child: GetBuilder<CountryState>(builder: (_) {
         return Scaffold(
-          body: SingleChildScrollView(
-            child: RefreshIndicator(
-              onRefresh: () => Future.sync(() async {
-                _countryState.changePullStatus();
-                await loadAllCountry();
-                _countryState.isNotPulled == true ? null : _countryListDrop.removeWhere((element) => element.name == 'United Kingdom');
-                print('country list after refreshing ${_countryListDrop}');
-              }),
-              child: Column(
-                children: [
-                  _searchField(context),
-                  _countryState.selectedCountry == ''
-                      ? const SizedBox.shrink()
-                      : Container(
-                          width: double.infinity,
-                          color: deepAss,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    CountryFlag(
-                                        flagUrl: _countryState.imageUrl),
-                                    primaryHorizontalSpacer,
-                                    Text(
-                                      _countryState.selectedCountry,
-                                      style: sixteenBlack,
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  'Selected',
-                                  style: sixteenBlack,
-                                )
-                              ],
-                            ),
+          body: RefreshIndicator(
+            onRefresh: () => Future.sync(() async {
+              _countryState.changePullStatus();
+              await loadAllCountry();
+            }),
+            child: Column(
+              children: [
+                _searchField(context),
+                _countryState.selectedCountry == ''
+                    ? const SizedBox.shrink()
+                    : Container(
+                        width: double.infinity,
+                        color: deepAss,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  CountryFlag(
+                                      flagUrl: _countryState.imageUrl),
+                                  primaryHorizontalSpacer,
+                                  Text(
+                                    _countryState.selectedCountry,
+                                    style: sixteenBlack,
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                'Selected',
+                                style: sixteenBlack,
+                              )
+                            ],
                           ),
                         ),
-                  _countryList(context),
-                ],
-              ),
+                      ),
+                _countryList(context),
+              ],
             ),
           ),
           floatingActionButton: _countryState.selectedCountry == ''
@@ -121,7 +127,8 @@ class _CountryPickerState extends State<CountryPicker> {
                         borderRadius: BorderRadius.circular(16.0)),
                     onPressed: () {
                       Get.to(() => const OnBoard());
-                      _countryState.countryListDrop.clear();
+                       _allCountryList.clear();
+                       _searchCountryList.clear();
                     },
                     child: Text(
                       'Continue',
@@ -165,13 +172,7 @@ class _CountryPickerState extends State<CountryPicker> {
           ),
           primaryVerticalSpacer,
           TextFormField(
-            onChanged: (String value) async {
-              setState(() {
-                searchParam = value;
-                //  loadAllCountry();
-              });
-             // await loadAllCountry();
-            },
+              onChanged: onSearchTextChanged,
             controller: searchFieldController,
             decoration: InputDecoration(
               filled: true,
@@ -179,6 +180,10 @@ class _CountryPickerState extends State<CountryPicker> {
               contentPadding: const EdgeInsets.all(16),
               hintText: 'Search',
               hintStyle: fourteenDeepAss,
+              suffixIcon: IconButton(icon: const Icon(Icons.cancel,color: iconColor,), onPressed: () {
+                searchFieldController.clear();
+                onSearchTextChanged('');
+              },),
               focusedBorder: outlineBorder,
               enabledBorder: outlineBorder,
               focusColor: Colors.blue,
@@ -191,28 +196,50 @@ class _CountryPickerState extends State<CountryPicker> {
 
   Widget _countryList(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
-    return Container(
-      height: height,
-      width: double.infinity,
-      child: ListView.separated(
-        itemCount: _countryListDrop.length,
+    return  Expanded(
+      child: _searchCountryList.length != 0 || searchFieldController.text.isNotEmpty
+          ? ListView.separated(
+        itemCount: _searchCountryList.length,
         separatorBuilder: (BuildContext context, int index) => const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0),
           child: Divider(),
         ),
-        itemBuilder: (BuildContext context, int index) {
-          var data = _countryListDrop[index];
+        itemBuilder: (_, i) {
+        //  var data = _countryListDrop[index];
           return CountryTile(
-            countryName: data.name,
-            flagUrl: data.flag,
-            phoneCode: data.phone,
+            countryName: _searchCountryList[i].countryName,
+            flagUrl: _searchCountryList[i].flag,
+            phoneCode: _searchCountryList[i].phoneCode,
             onTap: () {
-              _countryState.changeCountryData(data.name, data.phone, data.flag);
+              _countryState.changeCountryData(_searchCountryList[i].countryName, _searchCountryList[i].phoneCode, _searchCountryList[i].flag);
             },
           );
         },
-      ),
+      )
+          :  ListView.separated(
+        itemCount: _allCountryList.length,
+        separatorBuilder: (BuildContext context, int index) => const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Divider(),
+        ),
+        itemBuilder: (_, i) {
+          //  var data = _countryListDrop[index];
+          return CountryTile(
+            countryName: _allCountryList[i].countryName,
+            flagUrl: _allCountryList[i].flag,
+            phoneCode: _allCountryList[i].phoneCode,
+            onTap: () {
+              _countryState.changeCountryData(_allCountryList[i].countryName, _allCountryList[i].phoneCode, _allCountryList[i].flag);
+            },
+          );
+        },
+      )
     );
   }
 
 }
+
+
+List<CountryList> _searchCountryList = [];
+
+List<CountryList> _allCountryList = [];

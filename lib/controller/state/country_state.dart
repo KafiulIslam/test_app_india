@@ -1,10 +1,7 @@
 import 'package:get/get.dart';
-import 'package:test_app/model/country_model.dart';
 
 class CountryState extends GetxController{
 
-  RxList<CountryModel> countryListDrop = (List<CountryModel>.of([])).obs;
-  // List<CountryModel> countryListDrop = [].obs;
   String _countryName = '';
   String get selectedCountry => _countryName;
 
