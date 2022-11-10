@@ -28,6 +28,7 @@ class _CountryPickerState extends State<CountryPicker> {
   late List<CountryTile> _countryListDrop = [];
   TextEditingController searchFieldController = TextEditingController();
 
+
   Future<void> loadAllCountry() async {
     final countryData = await getCountryList();
     countryData['data']['data']['countries'].forEach((element) {
@@ -42,33 +43,20 @@ class _CountryPickerState extends State<CountryPicker> {
           phoneCode: phoneCode,
           onTap: () {
             _countryState.changeCountryData(countryName,phoneCode,flagUrl);
-            // if(_countryState.selectedCountry != '' && _countryListDrop.isNotEmpty){
-            //   countryDelete();
-            // }
           },
         ));
       });
     });
-    if(_countryState.selectedCountry != '' && _countryListDrop.isNotEmpty){
-      Timer.periodic(Duration(seconds: 10), (timer) {
-        setState(() {
-          _countryListDrop.removeAt(0);
-        });
-      });
-    }else{
-      loadAllCountry();
-    }
-  }
-
-  void countryDelete() {
-    if (_countryListDrop.isNotEmpty) {
-      Timer.periodic(Duration(seconds: 1), (timer) {
-        setState(() {
-          _countryListDrop.removeAt(0);
-        });
-      });
-    } else {
-      loadAllCountry();
+    if(_countryState.selectedCountry != ''){
+      Timer.periodic(const Duration(seconds: 10), (timer) {
+        if(_countryListDrop.isNotEmpty){
+          setState(() {
+            _countryListDrop.removeAt(0);
+          });
+        }else{
+          loadAllCountry();
+        }
+       });
     }
   }
 
