@@ -51,23 +51,30 @@ class _CountryPickerState extends State<CountryPicker> {
   onSearchTextChanged(String text) async {
     _searchCountryList.clear();
     if (text.isEmpty) {
-      setState(() {});
+     // setState(() {});
       return;
     }
 
     _allCountryList.forEach((country) {
       if (country.countryName.contains(text) ||
-          country.phoneCode.contains(text))
+          country.phoneCode.contains(text)) {
         _searchCountryList.add(country);
+      }
     });
 
-    setState(() {});
+  //  setState(() {});
   }
 
   @override
   void initState() {
     loadAllCountry();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -201,7 +208,7 @@ class _CountryPickerState extends State<CountryPicker> {
   Widget _countryList(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
     return Expanded(
-        child: _searchCountryList.length != 0 ||
+        child: _searchCountryList.isNotEmpty ||
                 searchFieldController.text.isNotEmpty
             ? ListView.separated(
                 itemCount: _searchCountryList.length,

@@ -35,10 +35,19 @@ dependencies:
   get: ^4.6.5
   textfield_search: ^0.10.0
   cached_network_image: ^3.2.2
+  android_alarm_manager_plus: ^2.1.0
+  awesome_notifications: ^0.7.4+1
+  wifi_iot: ^0.3.18
+  network_info_plus: ^3.0.2
+  wifi_scan: ^0.4.0+1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
+  mocktail: ^0.3.0
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
